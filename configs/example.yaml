@@ -1,0 +1,54 @@
+# dbprobe cuma punya 2 kemampuan:
+#   1. connectivity — tes bisa connect ke database (network).
+#   2. query        — jalankan SQL yang kamu tulis sendiri (query_checks).
+
+#   export MYSQL_PASSWORD=... PG_PASSWORD=... ORACLE_PASSWORD=... MSSQL_PASSWORD=...
+#   ./dbprobe check --config configs/example.yaml
+
+targets:
+  - name: test DB Mysql
+    engine: mysql
+    dsn: "user:${MYSQL_PASSWORD}@tcp(127.0.0.1:3306)/appdb"
+    checks: [connectivity, query]
+    query_checks:
+      - name: "list tabel"
+        sql: "SHOW TABLES"
+      - name: "jumlah koneksi"
+        sql: "SELECT COUNT(*) AS n FROM information_schema.processlist"
+
+  - name: test DB Postgres
+    engine: postgres
+    dsn: "postgres://user:${PG_PASSWORD}@127.0.0.1:5432/appdb?sslmode=disable"
+    checks: [connectivity, query]
+    # query_checks:
+    #   - name: "list tabel"
+    #     sql: "SELECT table_name FROM information_schema.tables WHERE table_schema='public'"
+    #   - name: "jumlah koneksi"
+    #     sql: "SELECT count(*) AS n FROM pg_stat_activity"
+
+  - name: test DB Postgres
+    engine: oracle
+    dsn: "oracle://user@127.0.0.1:1521/database"
+    password: "ORA_PASSWORD"
+    checks: [connectivity, query]
+    query_checks:
+      - name: "cek barang"
+        sql: "SELECT * FROM BARANG WHERE ROWNUM < 2"
+        expect:
+          row_count: 1
+          max_duration: 2s"
+
+  - name: test DB Mssql
+    engine: sqlserver
+    dsn: "sqlserver://sa:${MSSQL_PASSWORD}@127.0.0.1:1433?database=master"
+    checks: [connectivity, query]
+    # query_checks:
+    #   - name: "list database"
+    #     sql: "SELECT name FROM sys.databases"
+
+# Catatan:
+# - Password sebaiknya dari environment (${MYSQL_PASSWORD}, dst.).
+# - Bila password memuat karakter khusus (mis. '#') dan DSN berbentuk URL,
+#   pakai field `password` agar dbprobe meng-encode otomatis. Contoh:
+#     dsn: "oracle://app_user@db.example.com:1521/ORCLPDB1"
+#     password: "${ORACLE_PASSWORD}"

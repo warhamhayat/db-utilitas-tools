@@ -1,0 +1,7 @@
+.git
+.gitignore
+README.md
+
+# binary hasil build lokal (akan di-build ulang di dalam image)
+dbprobe
+bin/

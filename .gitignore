@@ -1,0 +1,7 @@
+# binary hasil build
+/dbprobe
+/bin/
+
+# output laporan
+*.out.json
+report.json
