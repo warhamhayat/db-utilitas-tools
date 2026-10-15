@@ -17,25 +17,27 @@ user, versi, dll.)? Tulis sendiri sebagai `query_checks` di config.
 
 ### Cara 1 — unduh binary (tanpa Go)
 
-Ganti `OWNER` dengan `username/nama-repo` GitHub-mu.
+Prebuilt yang disediakan: **Linux amd64** dan **Windows amd64** (agar rilis ringan).
+Binary-nya **standalone** — sekali unduh langsung bisa dipakai, tanpa installer.
 
 ```bash
 # Linux amd64
-curl -fsSL https://github.com/warham/dbprobe/releases/latest/download/dbprobe_linux_amd64 -o dbprobe
+curl -fsSL https://github.com/warhamhayat/db-utilitas-tools/releases/latest/download/dbprobe_linux_amd64 -o dbprobe
 chmod +x dbprobe
 sudo mv dbprobe /usr/local/bin/
 
 dbprobe engines
 ```
 
-Nama file per platform: `dbprobe_linux_amd64`, `dbprobe_linux_arm64`,
-`dbprobe_darwin_amd64`, `dbprobe_darwin_arm64`, `dbprobe_windows_amd64.exe`.
-Setiap rilis juga menyertakan `SHA256SUMS` untuk verifikasi.
+Windows: unduh `dbprobe_windows_amd64.exe` dari halaman Releases.
+Setiap rilis menyertakan `SHA256SUMS` untuk verifikasi.
 
-Atau pakai installer (deteksi OS/arch otomatis):
+**Installer otomatis** (Linux/macOS) — deteksi OS/arch lalu unduh binary yang cocok.
+Kalau platform-mu tidak punya prebuilt (mis. macOS), ia coba **build dari source**
+bila Go terpasang:
 
 ```bash
-curl -fsSL https://github.com/warhamhayat/dbprobe/releases/latest/download/install.sh | sh
+curl -fsSL https://github.com/warhamhayat/db-utilitas-tools/releases/latest/download/install.sh | sh
 ```
 
 ### Cara 2 — build dari source (butuh Go 1.26+)
