@@ -1,0 +1,37 @@
+# Pod debug dbprobe — jalankan di namespace yang sama dengan aplikasi untuk
+# menguji jalur jaringan ke database dari dalam cluster.
+#
+#   1. Buat ConfigMap berisi config dbprobe (referensi: /config/db.yaml):
+#        kubectl create configmap dbprobe-config --from-file=db.yaml=./config.yaml
+#   2. Pastikan ada Secret berisi password (mis. app-db-secret key "password"),
+#      atau ganti env di bawah.
+#   3. Sesuaikan "image" dengan registry-mu.
+#   4. Jalankan:
+#        kubectl apply -f deploy/dbprobe-debug.yaml
+#        kubectl logs -f dbprobe-debug
+#        kubectl delete pod dbprobe-debug
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: dbprobe-debug
+spec:
+  restartPolicy: Never
+  containers:
+    - name: dbprobe
+      image: registry.example.com/tools/dbprobe:latest
+      args: ["check", "--config", "/config/db.yaml"]
+      env:
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: app-db-secret
+              key: password
+      volumeMounts:
+        - name: config
+          mountPath: /config
+          readOnly: true
+  volumes:
+    - name: config
+      configMap:
+        name: dbprobe-config
